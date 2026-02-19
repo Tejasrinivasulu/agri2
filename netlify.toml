@@ -1,0 +1,11 @@
+[build]
+  base = "agri-assist-ui-main"
+  command = "npm run build"
+  publish = "dist"
+
+# SPA: serve index.html for all routes (React Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+

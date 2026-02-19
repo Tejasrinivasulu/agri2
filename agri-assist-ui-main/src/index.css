@@ -1,0 +1,339 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Nature-inspired green theme */
+    --background: 85 25% 95%;
+    --foreground: 140 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 140 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 140 30% 15%;
+
+    /* Primary: Rich forest green */
+    --primary: 142 55% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Light sage green */
+    --secondary: 120 25% 90%;
+    --secondary-foreground: 140 30% 25%;
+
+    /* Muted: Soft cream */
+    --muted: 45 30% 92%;
+    --muted-foreground: 140 15% 45%;
+
+    /* Accent: Golden wheat */
+    --accent: 42 85% 55%;
+    --accent-foreground: 30 50% 15%;
+
+    /* Sunrise orange */
+    --sunrise: 25 95% 55%;
+    --sunrise-foreground: 0 0% 100%;
+
+    /* Leaf green variations */
+    --leaf-light: 120 35% 75%;
+    --leaf-medium: 130 45% 50%;
+    --leaf-dark: 140 50% 30%;
+
+    /* Earth tones */
+    --earth: 30 25% 40%;
+    --earth-light: 35 30% 85%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 120 20% 85%;
+    --input: 120 20% 88%;
+    --ring: 142 55% 35%;
+
+    --radius: 1rem;
+
+    /* Gradients */
+    --gradient-nature: linear-gradient(135deg, hsl(130 45% 45%) 0%, hsl(142 55% 35%) 50%, hsl(150 50% 30%) 100%);
+    --gradient-sunrise: linear-gradient(180deg, hsl(35 90% 60%) 0%, hsl(25 95% 55%) 100%);
+    --gradient-sky: linear-gradient(180deg, hsl(200 60% 70%) 0%, hsl(180 50% 85%) 50%, hsl(85 25% 95%) 100%);
+    --gradient-field: linear-gradient(180deg, hsl(85 25% 95%) 0%, hsl(100 30% 88%) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsl(140 30% 30% / 0.15);
+    --shadow-glow: 0 0 30px hsl(142 55% 35% / 0.2);
+    --shadow-card: 0 8px 32px -8px hsl(140 30% 20% / 0.12);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 140 30% 8%;
+    --foreground: 85 25% 95%;
+
+    --card: 140 25% 12%;
+    --card-foreground: 85 25% 95%;
+
+    --popover: 140 25% 12%;
+    --popover-foreground: 85 25% 95%;
+
+    --primary: 142 50% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 140 20% 18%;
+    --secondary-foreground: 85 25% 90%;
+
+    --muted: 140 15% 20%;
+    --muted-foreground: 120 15% 60%;
+
+    --accent: 42 75% 50%;
+    --accent-foreground: 30 50% 10%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 140 15% 20%;
+    --input: 140 15% 22%;
+    --ring: 142 50% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Nunito', sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-nature {
+    background: var(--gradient-nature);
+  }
+
+  .gradient-sunrise {
+    background: var(--gradient-sunrise);
+  }
+
+  .gradient-sky {
+    background: var(--gradient-sky);
+  }
+
+  .gradient-field {
+    background: var(--gradient-field);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Mobile app container */
+.mobile-container {
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Optimize for 375px width devices (iPhone SE, small Android) */
+@media (max-width: 375px) {
+  .mobile-container {
+    max-width: 100%;
+  }
+}
+
+/* Optimize for shorter screens (608px height) */
+@media (max-height: 608px) {
+  .mobile-container {
+    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  /* Reduce padding on smaller screens */
+  .gradient-nature {
+    padding-bottom: 1rem !important;
+  }
+  
+  /* Ensure bottom navigation doesn't overlap content */
+  .min-h-screen {
+    padding-bottom: 5rem;
+  }
+}
+
+/* Specific optimizations for 375x608 screens */
+@media (width: 375px) and (max-height: 608px) {
+  /* Compact spacing for small screens */
+  .space-y-3 > * + * {
+    margin-top: 0.5rem;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 0.75rem;
+  }
+  
+  .space-y-6 > * + * {
+    margin-top: 1rem;
+  }
+  
+  /* Smaller text on very small screens */
+  .text-xl {
+    font-size: 1.125rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+}
+
+/* Mobile button sizes - ensure touch-friendly (min 44px height) */
+@media (max-width: 430px) {
+  button,
+  .btn,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Select triggers should also be touch-friendly */
+  [data-radix-select-trigger] {
+    min-height: 44px;
+  }
+  
+  /* Input fields */
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"] {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Ensure buttons have proper padding */
+  button:not([class*="size-icon"]) {
+    padding: 0.625rem 1rem;
+  }
+}
+
+/* Floating animation for elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(142 55% 35% / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(142 55% 35% / 0.5);
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes grow {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-grow {
+  animation: grow 0.5s ease-out forwards;
+}
+
+/* Plant decorations */
+.plant-decoration {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Voice button pulse */
+.voice-pulse {
+  position: relative;
+}
+
+.voice-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: hsl(var(--primary) / 0.2);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Chatbot Animations */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
