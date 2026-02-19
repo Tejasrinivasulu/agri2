@@ -344,7 +344,7 @@ const BuySellScreen: React.FC<BuySellScreenProps> = ({ onBack }) => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Any State</SelectItem>
-            {STATE_OPTIONS.map((s) => (
+            {STATE_OPTIONS.filter((s) => s.length > 0).map((s) => (
               <SelectItem key={s} value={s}>
                 {s}
               </SelectItem>
@@ -361,7 +361,7 @@ const BuySellScreen: React.FC<BuySellScreenProps> = ({ onBack }) => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Any District</SelectItem>
-            {filterDistrictOptions.map((d) => (
+            {filterDistrictOptions.filter((d) => d.length > 0).map((d) => (
               <SelectItem key={d} value={d}>
                 {d}
               </SelectItem>
@@ -537,14 +537,14 @@ const BuySellScreen: React.FC<BuySellScreenProps> = ({ onBack }) => {
       )}
 
       <Select
-        value={sellCropName}
+        value={sellCropName || undefined}
         onValueChange={setSellCropName}
       >
         <SelectTrigger className="bg-card/90 border-0 min-h-[44px]">
           <SelectValue placeholder="Select Crop Name *" />
         </SelectTrigger>
         <SelectContent>
-          {CROP_OPTIONS.map((c) => (
+          {CROP_OPTIONS.filter((c) => c.length > 0).map((c) => (
             <SelectItem key={c} value={c}>
               {CROP_EMOJIS[c] || "🌱"} {c}
             </SelectItem>
@@ -616,7 +616,7 @@ const BuySellScreen: React.FC<BuySellScreenProps> = ({ onBack }) => {
           <SelectValue placeholder="Select State" />
         </SelectTrigger>
         <SelectContent>
-          {STATE_OPTIONS.map((s) => (
+          {STATE_OPTIONS.filter((s) => s.length > 0).map((s) => (
             <SelectItem key={s} value={s}>
               {s}
             </SelectItem>
@@ -624,22 +624,22 @@ const BuySellScreen: React.FC<BuySellScreenProps> = ({ onBack }) => {
         </SelectContent>
       </Select>
 
-      <Select
-        value={sellDistrict}
-        onValueChange={(val) => {
-          setSellDistrict(val);
-          if (sellState && val) {
-            setSellLocation(`${val}, ${sellState}`);
-          }
-        }}
-        disabled={!sellState || districtOptions.length === 0}
-      >
+        <Select
+          value={sellDistrict || undefined}
+          onValueChange={(val) => {
+            setSellDistrict(val);
+            if (sellState && val) {
+              setSellLocation(`${val}, ${sellState}`);
+            }
+          }}
+          disabled={!sellState || districtOptions.length === 0}
+        >
         <SelectTrigger className="bg-card/90 border-0 min-h-[44px]">
           <SelectValue placeholder={sellState ? "Select District *" : "Select State first"} />
         </SelectTrigger>
         <SelectContent>
           {districtOptions.length > 0 ? (
-            districtOptions.map((d) => (
+            districtOptions.filter((d) => d.length > 0).map((d) => (
               <SelectItem key={d} value={d}>
                 {d}
               </SelectItem>

@@ -1,49 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2, VolumeX, Loader2, RefreshCw } from 'lucide-react';
 import { useAIAssistant } from '@/hooks/useAIAssistant';
-
-interface NewsItem {
-  id: number;
-  title: string;
-  summary: string;
-  category: string;
-  emoji: string;
-  date: string;
-}
+import { useFarmingNews, type NewsItem } from '@/contexts/FarmingNewsContext';
+import { formatRelativeTime, formatTimeAgo } from '@/lib/dateUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const NewsSlider: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { getNews, speak, isSpeaking, stopSpeaking } = useAIAssistant();
-
-  const defaultNews: NewsItem[] = [
-    { id: 1, title: 'Paddy MSP increased by ₹100 per quintal', summary: 'Government announces new MSP rates for rabi season.', category: 'government', emoji: '🌾', date: 'Today' },
-    { id: 2, title: 'New irrigation scheme launched for farmers', summary: 'Free micro-irrigation kits available for small farmers.', category: 'schemes', emoji: '💧', date: 'Today' },
-    { id: 3, title: 'Organic farming subsidy extended till 2025', summary: 'Up to 50% subsidy on organic inputs for registered farmers.', category: 'schemes', emoji: '🌱', date: 'Today' },
-    { id: 4, title: 'Weather alert: Heavy rains expected', summary: 'IMD predicts rainfall in southern states this week.', category: 'weather', emoji: '🌧️', date: 'Today' },
-    { id: 5, title: 'Tomato prices rise by 20%', summary: 'Supply shortage drives prices up in wholesale markets.', category: 'market', emoji: '🍅', date: 'Today' },
-  ];
+  const [tick, setTick] = useState(0);
+  const { news, lastUpdated, loading, refresh } = useFarmingNews();
+  const { speak, isSpeaking, stopSpeaking } = useAIAssistant();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    const fetchNews = async () => {
-      setLoading(true);
-      try {
-        const data = await getNews();
-        if (data?.news && data.news.length > 0) {
-          setNews(data.news);
-        } else {
-          setNews(defaultNews);
-        }
-      } catch (error) {
-        console.error('Failed to fetch news:', error);
-        setNews(defaultNews);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNews();
+    const interval = setInterval(() => setTick((c) => c + 1), 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -63,19 +34,31 @@ const NewsSlider: React.FC = () => {
   };
 
   const handleSpeak = (item: NewsItem) => {
-    if (isSpeaking) {
-      stopSpeaking();
-    } else {
-      speak(`${item.title}. ${item.summary}`);
-    }
+    if (isSpeaking) stopSpeaking();
+    else speak(`${item.title}. ${item.summary}`);
   };
 
-  if (loading) {
+  const displayDate = (item: NewsItem) => {
+    if (item.publishedAt) {
+      try {
+        return formatRelativeTime(new Date(item.publishedAt));
+      } catch {
+        return item.date;
+      }
+    }
+    return item.date;
+  };
+
+  const now = new Date();
+
+  if (loading && news.length === 0) {
     return (
       <div className="relative">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg">📰</span>
-          <h3 className="font-semibold text-foreground">Farming News</h3>
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">📰</span>
+            <h3 className="font-semibold text-foreground">{t.farmingNews}</h3>
+          </div>
         </div>
         <div className="bg-gradient-to-r from-primary/10 to-leaf-light/30 rounded-2xl p-6 border border-primary/20 flex items-center justify-center">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -85,14 +68,31 @@ const NewsSlider: React.FC = () => {
     );
   }
 
-  const displayNews = news.length > 0 ? news : defaultNews;
+  const displayNews = news.length > 0 ? news : [];
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">📰</span>
-        <h3 className="font-semibold text-foreground">Farming News</h3>
-        <span className="ml-auto text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">AI Powered</span>
+      <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">📰</span>
+          <h3 className="font-semibold text-foreground">{t.farmingNews}</h3>
+          <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">Live</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {lastUpdated && (
+            <span className="text-xs text-muted-foreground" title={lastUpdated.toLocaleString()}>
+              Updated {formatTimeAgo(lastUpdated, now)}
+            </span>
+          )}
+          <button
+            onClick={() => refresh()}
+            disabled={loading}
+            className="p-1.5 rounded-full bg-muted hover:bg-muted/80 text-foreground disabled:opacity-50 transition-colors"
+            title="Refresh news"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
       
       <div className="relative overflow-hidden">
@@ -109,7 +109,7 @@ const NewsSlider: React.FC = () => {
                     <p className="font-medium text-foreground text-sm leading-tight mb-1">{item.title}</p>
                     <p className="text-xs text-muted-foreground mb-2">{item.summary}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">{item.date}</span>
+                      <span className="text-xs text-muted-foreground">{displayDate(item)}</span>
                       <button 
                         onClick={() => handleSpeak(item)}
                         className="p-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"

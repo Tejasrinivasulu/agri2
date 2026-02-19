@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { FarmingNewsProvider } from '@/contexts/FarmingNewsContext';
 import { useAuth } from '@/hooks/useAuth';
 import SplashScreen from '@/components/SplashScreen';
 import LoginScreen from '@/components/LoginScreen';
@@ -75,9 +76,11 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="mobile-container bg-background min-h-screen">
-      {renderScreen()}
-    </div>
+    <FarmingNewsProvider>
+      <div className="mobile-container bg-background min-h-screen">
+        {renderScreen()}
+      </div>
+    </FarmingNewsProvider>
   );
 };
 

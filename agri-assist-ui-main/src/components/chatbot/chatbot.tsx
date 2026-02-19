@@ -601,7 +601,7 @@ const Chatbot = () => {
   return (
     <>
       {/* Floating Chat Button with enhanced animation */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-20 right-6 z-50">
         <div className="relative">
           {/* Pulse ring animation */}
           {!isOpen && (
@@ -639,15 +639,15 @@ const Chatbot = () => {
         )}
       </div>
 
-      {/* Enhanced Chat Window */}
+      {/* Enhanced Chat Window - correct size when opened */}
       <div
         className={cn(
-          "fixed bottom-24 right-6 z-40 transition-all duration-500 ease-out",
+          "fixed bottom-40 right-2 sm:right-6 z-40 transition-all duration-500 ease-out w-[calc(100vw-1rem)] max-w-[384px] sm:max-w-[400px]",
           isOpen ? "translate-x-0 opacity-100 scale-100" : "translate-x-full opacity-0 scale-95 pointer-events-none"
         )}
       >
-        <Card className="w-96 h-[500px] shadow-2xl border-2 border-green-200 bg-white/98 backdrop-blur-md">
-          <CardHeader className="bg-gradient-to-r from-green-50 via-emerald-50 to-green-100 border-b border-green-200">
+        <Card className="w-full h-[min(500px,75vh)] min-h-[400px] shadow-2xl border-2 border-green-200 bg-white/98 backdrop-blur-md flex flex-col overflow-hidden">
+          <CardHeader className="flex-shrink-0 bg-gradient-to-r from-green-50 via-emerald-50 to-green-100 border-b border-green-200">
             <CardTitle className="flex items-center gap-3 text-green-800">
               <div className="relative">
                 <Bot className="h-6 w-6" />
@@ -660,9 +660,9 @@ const Chatbot = () => {
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="p-0 flex flex-col h-[420px]">
+          <CardContent className="p-0 flex flex-col flex-1 min-h-0">
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3">
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -737,7 +737,7 @@ const Chatbot = () => {
             )}
 
             {/* Input */}
-            <div className="p-4 border-t border-green-200 bg-gradient-to-r from-green-50/50 to-emerald-50/50">
+            <div className="flex-shrink-0 p-4 border-t border-green-200 bg-gradient-to-r from-green-50/50 to-emerald-50/50">
               <div className="flex gap-2">
                 <Input
                   value={input}

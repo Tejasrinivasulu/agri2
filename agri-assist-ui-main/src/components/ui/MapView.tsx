@@ -32,6 +32,8 @@ interface MapViewProps {
   zoom?: number;
   height?: string;
   showControls?: boolean;
+  /** Initial tile layer when embedded (e.g. Map vs Satellite tab). */
+  mapType?: 'streets' | 'satellite';
   onLocationSelect?: (lat: number, lng: number, address?: string) => void;
   selectedLocation?: [number, number];
   showAgriculturalFeatures?: boolean;
@@ -166,11 +168,12 @@ const MapView: React.FC<MapViewProps> = ({
   zoom = 13,
   height = '400px',
   showControls = true,
+  mapType: initialMapType,
   onLocationSelect,
   selectedLocation,
   showAgriculturalFeatures = true,
 }) => {
-  const [mapType, setMapType] = useState<'streets' | 'satellite'>('satellite');
+  const [mapType, setMapType] = useState<'streets' | 'satellite'>(initialMapType ?? 'streets');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFeature, setSelectedFeature] = useState<AgriculturalFeature | null>(null);
   const [weatherOverlay, setWeatherOverlay] = useState(false);

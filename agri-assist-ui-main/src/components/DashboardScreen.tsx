@@ -66,8 +66,11 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ onLogout }) => {
                 <NewsSlider />
               </div>
 
-              <div className="flex justify-center">
+              <div className="flex flex-col items-center gap-2">
                 <VoiceAssistantButton />
+                <p className="text-xs text-muted-foreground text-center">
+                  Voice: English • Telugu • Hindi — change language above to switch.
+                </p>
               </div>
 
               <div className="bg-card p-4">

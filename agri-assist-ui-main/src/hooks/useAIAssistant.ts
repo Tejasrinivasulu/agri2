@@ -17,26 +17,27 @@ export const useAIAssistant = () => {
   };
 
   const speak = useCallback((text: string) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Set language based on current app language
-      const langMap: Record<string, string> = {
-        'en': 'en-IN',
-        'te': 'te-IN',
-        'hi': 'hi-IN',
-        'ta': 'ta-IN'
-      };
-      utterance.lang = langMap[language] || 'en-IN';
-      utterance.rate = 0.9;
-      
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-      
-      window.speechSynthesis.speak(utterance);
-    }
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const langMap: Record<string, string> = {
+      'en': 'en-IN',
+      'te': 'te-IN',
+      'hi': 'hi-IN',
+      'ta': 'ta-IN'
+    };
+    const preferred = langMap[language] || 'en-IN';
+    const fallback = 'en-IN';
+    const voices = window.speechSynthesis.getVoices();
+    const pickVoice = (locale: string) => voices.find((v) => v.lang === locale || v.lang.startsWith(locale.split('-')[0]));
+    utterance.lang = preferred;
+    utterance.rate = 0.9;
+    const voice = pickVoice(preferred) || pickVoice(fallback);
+    if (voice) utterance.voice = voice;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
   }, [language]);
 
   const stopSpeaking = useCallback(() => {

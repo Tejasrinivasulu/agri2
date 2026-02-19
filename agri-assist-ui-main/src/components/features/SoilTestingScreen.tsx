@@ -272,12 +272,12 @@ const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onBack }) => {
           onChange={(e) => setFarmerName(e.target.value)}
         />
 
-        <Select value={soilType} onValueChange={setSoilType}>
+        <Select value={soilType || undefined} onValueChange={setSoilType}>
           <SelectTrigger className="bg-card/90 border-0 min-h-[44px]">
             <SelectValue placeholder="Select Soil Type *" />
           </SelectTrigger>
           <SelectContent>
-            {soilTypes.map((s) => (
+            {soilTypes.filter((s) => (s.id?.length ?? 0) > 0).map((s) => (
               <SelectItem key={s.id} value={s.id}>
                 {s.emoji} {s.name}
               </SelectItem>
@@ -297,28 +297,28 @@ const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onBack }) => {
         />
 
         <div className="grid grid-cols-3 gap-2">
-          <Select value={nitrogenLevel} onValueChange={setNitrogenLevel}>
+          <Select value={nitrogenLevel || undefined} onValueChange={setNitrogenLevel}>
             <SelectTrigger className="bg-card/90 border-0 min-h-[44px] text-xs">
               <SelectValue placeholder="N" />
             </SelectTrigger>
-            <SelectContent>
-              {npkLevels.map((l) => <SelectItem key={l} value={l}>N: {l}</SelectItem>)}
+          <SelectContent>
+            {npkLevels.filter((l) => (l?.length ?? 0) > 0).map((l) => <SelectItem key={l} value={l}>N: {l}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={phosphorusLevel} onValueChange={setPhosphorusLevel}>
+          <Select value={phosphorusLevel || undefined} onValueChange={setPhosphorusLevel}>
             <SelectTrigger className="bg-card/90 border-0 min-h-[44px] text-xs">
               <SelectValue placeholder="P" />
             </SelectTrigger>
             <SelectContent>
-              {npkLevels.map((l) => <SelectItem key={l} value={l}>P: {l}</SelectItem>)}
+              {npkLevels.filter((l) => (l?.length ?? 0) > 0).map((l) => <SelectItem key={l} value={l}>P: {l}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Select value={potassiumLevel} onValueChange={setPotassiumLevel}>
+          <Select value={potassiumLevel || undefined} onValueChange={setPotassiumLevel}>
             <SelectTrigger className="bg-card/90 border-0 min-h-[44px] text-xs">
               <SelectValue placeholder="K" />
             </SelectTrigger>
             <SelectContent>
-              {npkLevels.map((l) => <SelectItem key={l} value={l}>K: {l}</SelectItem>)}
+              {npkLevels.filter((l) => (l?.length ?? 0) > 0).map((l) => <SelectItem key={l} value={l}>K: {l}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
