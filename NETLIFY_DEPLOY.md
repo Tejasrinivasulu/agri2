@@ -23,15 +23,26 @@ your-repo/
   publish = "dist"
 ```
 
-### 2. **Environment variables**
+### 2. **Environment variables** ⚠️ CRITICAL - Required for login to work!
+
+**⚠️ Without these, you'll get "Invalid API key" error!**
+
 Set these in Netlify dashboard:
 
 **Site settings → Environment variables → Add variable**
 
 | Variable | Value | Required |
 |----------|-------|----------|
-| `VITE_SUPABASE_URL` | `https://zusbsuunzhaocsacanai.supabase.co` | Yes |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Your Supabase anon key | Yes |
+| `VITE_SUPABASE_URL` | `https://zusbsuunzhaocsacanai.supabase.co` | ✅ Yes |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1c2JzdXVuemhhb2NzYWNhbmFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyMzY0NDAsImV4cCI6MjA4MTgxMjQ0MH0.vHHra1aIN_TpQ2DaO3adFNRL1SmR4iuaPG98HV7K4VE` | ✅ Yes |
+
+**Important:**
+- ✅ Variable names are case-sensitive: `VITE_SUPABASE_URL` (not lowercase)
+- ✅ Must start with `VITE_` for Vite to include them
+- ✅ After adding, you MUST redeploy (trigger deploy or push new commit)
+- ✅ The `.env` file is NOT deployed - you MUST add these in Netlify dashboard
+
+**See `NETLIFY_ENV_SETUP.md` for detailed step-by-step instructions.**
 
 ### 3. **Node.js version**
 Netlify uses Node 18 by default. Add to `netlify.toml` if needed:
