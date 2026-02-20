@@ -129,7 +129,11 @@ const WeatherScreen: React.FC<WeatherScreenProps> = ({ onBack }) => {
     }
   }, []);
 
-  // Don't auto-detect on mount - only when user clicks "Use My Location"
+  // Auto-detect current location when Weather screen opens (e.g. from voice "open weather prediction")
+  useEffect(() => {
+    handleAutoDetect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAutoDetect = () => {
     if (navigator.geolocation) {

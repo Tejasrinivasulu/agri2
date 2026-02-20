@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { ArrowLeft, Camera, Upload, Volume2, Loader2, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -107,6 +107,12 @@ const CropScanScreen: React.FC<CropScanScreenProps> = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Auto-open camera when Crop Scan screen opens (no button click)
+  useEffect(() => {
+    const t = setTimeout(() => cameraInputRef.current?.click(), 400);
+    return () => clearTimeout(t);
+  }, []);
+
   const analyze = useCallback(
     async (imageBase64?: string) => {
       const dataUrl = imageBase64 ?? imageDataUrl;
@@ -187,6 +193,11 @@ const CropScanScreen: React.FC<CropScanScreenProps> = ({ onBack }) => {
     },
     [language]
   );
+
+  // Auto-speak result when capture is analyzed (no button click)
+  useEffect(() => {
+    if (result) speak(getTTSMessage(result));
+  }, [result, getTTSMessage, speak]);
 
   const handleSpeak = () => {
     if (result) speak(getTTSMessage(result));

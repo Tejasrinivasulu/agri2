@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+/** Voice TTS and recognition use this; add locale here when adding a new app language. */
 const LANG_MAP: Record<string, string> = { en: 'en-IN', te: 'te-IN', hi: 'hi-IN', ta: 'ta-IN' };
 
 /** Local fallback responses when backend is unavailable. Keys are lowercase English keywords; values are [en, hi, te]. */
@@ -97,6 +98,10 @@ const VOICE_INTENT_ROUTES: [string, string][] = [
   ['map', '/features/map'],
   ['prediction', '/features/price-prediction'],
   ['ai', '/features/price-prediction'],
+  ['back to dashboard', '/'],
+  ['open dashboard', '/'],
+  ['go to dashboard', '/'],
+  ['dashboard', '/'],
   ['home', '/'],
   ['main', '/'],
   ['back', '/'],
@@ -109,6 +114,25 @@ export function getVoiceIntentPath(transcript: string): string | null {
     if (lower.includes(keyword)) return path;
   }
   return null;
+}
+
+/** Short confirmation in selected language when navigating (one line only). Used so assistant speaks once, then farmer can ask again. */
+const NAV_CONFIRM: Record<string, [string, string, string]> = {
+  '/': ['Opening dashboard.', 'डैशबोर्ड खोल रहा हूं।', 'డాష్‌బోర్డ్ తెరుస్తున్నాను.'],
+  '/features/weather': ['Opening weather.', 'मौसम खोल रहा हूं।', 'వాతావరణం తెరుస్తున్నాను.'],
+  '/features/crop-rates': ['Opening crop prices.', 'फसल कीमत खोल रहा हूं।', 'పంట ధరలు తెరుస్తున్నాను.'],
+  '/features/crop-scan': ['Opening crop scan.', 'क्रॉप स्कैन खोल रहा हूं।', 'క్రాప్ స్కాన్ తెరుస్తున్నాను.'],
+  '/features/buy-sell': ['Opening buy and sell.', 'खरीद बिक्री खोल रहा हूं।', 'కొనడం అమ్మడం తెరుస్తున్నాను.'],
+  '/features/soil-testing': ['Opening soil testing.', 'मिट्टी जांच खोल रहा हूं।', 'మట్టి పరీక్ష తెరుస్తున్నాను.'],
+  '/features/govt-schemes': ['Opening government schemes.', 'योजनाएं खोल रहा हूं।', 'ప్రభుత్వ పథకాలు తెరుస్తున్నాను.'],
+  '/features/calculator': ['Opening calculator.', 'कैलकुलेटर खोल रहा हूं।', 'కాల్క్యులేటర్ తెరుస్తున్నాను.'],
+  '/features/map': ['Opening map.', 'नक्शा खोल रहा हूं।', 'మ్యాప్ తెరుస్తున్నాను.'],
+};
+export function getNavigationConfirm(path: string, language: string): string {
+  const row = NAV_CONFIRM[path];
+  if (!row) return language === 'hi' ? 'खोल रहा हूं।' : language === 'te' ? 'తెరుస్తున్నాను.' : 'Opening.';
+  const idx = language === 'hi' ? 1 : language === 'te' ? 2 : 0;
+  return row[idx] || row[0];
 }
 
 function getLocalFallback(text: string, lang: 'en' | 'hi' | 'te'): string {

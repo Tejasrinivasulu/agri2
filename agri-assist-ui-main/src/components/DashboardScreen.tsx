@@ -58,7 +58,7 @@ const DashboardScreen: React.FC = () => {
 
               <div className="bg-card p-4 rounded-2xl border border-primary/20 bg-gradient-to-b from-primary/5 to-transparent">
                 <p className="text-sm font-semibold text-foreground mb-2 text-center">🎤 AI Voice Assistant</p>
-                <p className="text-xs text-muted-foreground text-center mb-3">Say &quot;weather prediction&quot;, &quot;crop price&quot;, &quot;buy sell&quot; to open features. Response is spoken and shown below.</p>
+                <p className="text-xs text-muted-foreground text-center mb-3">Tap the mic, then say &quot;open weather&quot;, &quot;crop price&quot;, &quot;crop scan&quot; or &quot;open dashboard&quot;. Reply is spoken in your selected language.</p>
                 <div className="flex justify-center">
                   <VoiceAssistantButton
                     onNavigate={navigate}
@@ -67,13 +67,13 @@ const DashboardScreen: React.FC = () => {
                   />
                 </div>
                 {(voiceTranscript || voiceResponse) && (
-                  <div className="mt-3 p-3 rounded-xl bg-muted/50 text-sm space-y-1">
-                    {voiceTranscript && (
-                      <p><span className="font-medium text-muted-foreground">You said:</span> {voiceTranscript}</p>
-                    )}
-                    {voiceResponse && (
-                      <p><span className="font-medium text-muted-foreground">Assistant:</span> {voiceResponse}</p>
-                    )}
+                  <div className="mt-3 p-3 rounded-xl bg-muted/50 text-sm space-y-1.5">
+                    {voiceTranscript ? (
+                      <p><span className="font-medium text-muted-foreground">You said:</span> <span className="text-foreground">{voiceTranscript}</span></p>
+                    ) : null}
+                    {voiceResponse ? (
+                      <p><span className="font-medium text-muted-foreground">Assistant:</span> <span className="text-foreground">{voiceResponse}</span></p>
+                    ) : null}
                   </div>
                 )}
               </div>
