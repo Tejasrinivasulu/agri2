@@ -32,6 +32,7 @@ import MapScreen from "./components/features/MapScreen";
 import MitraScreen from "./components/features/MitraScreen";
 import SearchScreen from "./components/features/SearchScreen";
 import ProfileScreen from "./components/features/ProfileScreen";
+import CropScanScreen from "./components/features/CropScanScreen";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,39 @@ const FeatureScreenWrapper = ({ Component }: { Component: React.ComponentType<{ 
   return <Component onBack={() => navigate('/')} />;
 };
 
+// Layout: routes only. AI Voice Assistant is on Dashboard only (below news), not behind chatbot.
+const AppLayout = () => (
+  <Routes>
+    <Route path="/" element={<Index />} />
+    <Route path="/features/crop-rates" element={<FeatureScreenWrapper Component={CropRatesScreen} />} />
+    <Route path="/features/weather" element={<FeatureScreenWrapper Component={WeatherScreen} />} />
+    <Route path="/features/buy-sell" element={<FeatureScreenWrapper Component={BuySellScreen} />} />
+    <Route path="/features/cattle" element={<FeatureScreenWrapper Component={CattlePetsScreen} />} />
+    <Route path="/features/technicians" element={<FeatureScreenWrapper Component={TechniciansScreen} />} />
+    <Route path="/features/agri-tools" element={<FeatureScreenWrapper Component={AgriToolsScreen} />} />
+    <Route path="/features/price-prediction" element={<FeatureScreenWrapper Component={PricePredictionScreen} />} />
+    <Route path="/features/crop-scan" element={<FeatureScreenWrapper Component={CropScanScreen} />} />
+    <Route path="/features/soil-testing" element={<FeatureScreenWrapper Component={SoilTestingScreen} />} />
+    <Route path="/features/govt-schemes" element={<FeatureScreenWrapper Component={GovtSchemesScreen} />} />
+    <Route path="/features/agri-officers" element={<FeatureScreenWrapper Component={AgriOfficersScreen} />} />
+    <Route path="/features/loan-assistance" element={<FeatureScreenWrapper Component={LoanAssistanceScreen} />} />
+    <Route path="/features/calculator" element={<FeatureScreenWrapper Component={CalculatorScreen} />} />
+    <Route path="/features/rewards" element={<FeatureScreenWrapper Component={RewardsScreen} />} />
+    <Route path="/features/land-renting" element={<FeatureScreenWrapper Component={LandRentingScreen} />} />
+    <Route path="/features/agri-invest" element={<FeatureScreenWrapper Component={AgriInvestScreen} />} />
+    <Route path="/features/farm-work" element={<FeatureScreenWrapper Component={FarmWorkScreen} />} />
+    <Route path="/features/ff-seeds" element={<FeatureScreenWrapper Component={FFSeedsScreen} />} />
+    <Route path="/features/farmer-guide" element={<FeatureScreenWrapper Component={FarmerGuideScreen} />} />
+    <Route path="/features/weekend-farming" element={<FeatureScreenWrapper Component={WeekendFarmingScreen} />} />
+    <Route path="/features/farming-classes" element={<FeatureScreenWrapper Component={FarmingClassesScreen} />} />
+    <Route path="/features/map" element={<FeatureScreenWrapper Component={MapScreen} />} />
+    <Route path="/features/mitra" element={<FeatureScreenWrapper Component={MitraScreen} />} />
+    <Route path="/features/search" element={<FeatureScreenWrapper Component={SearchScreen} />} />
+    <Route path="/features/profile" element={<FeatureScreenWrapper Component={ProfileScreen} />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
 const App = () => (
   <LanguageProvider>
     <QueryClientProvider client={queryClient}>
@@ -48,38 +82,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            
-            {/* Feature Routes */}
-            <Route path="/features/crop-rates" element={<FeatureScreenWrapper Component={CropRatesScreen} />} />
-          <Route path="/features/weather" element={<FeatureScreenWrapper Component={WeatherScreen} />} />
-          <Route path="/features/buy-sell" element={<FeatureScreenWrapper Component={BuySellScreen} />} />
-          <Route path="/features/cattle" element={<FeatureScreenWrapper Component={CattlePetsScreen} />} />
-          <Route path="/features/technicians" element={<FeatureScreenWrapper Component={TechniciansScreen} />} />
-          <Route path="/features/agri-tools" element={<FeatureScreenWrapper Component={AgriToolsScreen} />} />
-          <Route path="/features/price-prediction" element={<FeatureScreenWrapper Component={PricePredictionScreen} />} />
-          <Route path="/features/soil-testing" element={<FeatureScreenWrapper Component={SoilTestingScreen} />} />
-          <Route path="/features/govt-schemes" element={<FeatureScreenWrapper Component={GovtSchemesScreen} />} />
-          <Route path="/features/agri-officers" element={<FeatureScreenWrapper Component={AgriOfficersScreen} />} />
-          <Route path="/features/loan-assistance" element={<FeatureScreenWrapper Component={LoanAssistanceScreen} />} />
-          <Route path="/features/calculator" element={<FeatureScreenWrapper Component={CalculatorScreen} />} />
-          <Route path="/features/rewards" element={<FeatureScreenWrapper Component={RewardsScreen} />} />
-          <Route path="/features/land-renting" element={<FeatureScreenWrapper Component={LandRentingScreen} />} />
-          <Route path="/features/agri-invest" element={<FeatureScreenWrapper Component={AgriInvestScreen} />} />
-          <Route path="/features/farm-work" element={<FeatureScreenWrapper Component={FarmWorkScreen} />} />
-          <Route path="/features/ff-seeds" element={<FeatureScreenWrapper Component={FFSeedsScreen} />} />
-          <Route path="/features/farmer-guide" element={<FeatureScreenWrapper Component={FarmerGuideScreen} />} />
-          <Route path="/features/weekend-farming" element={<FeatureScreenWrapper Component={WeekendFarmingScreen} />} />
-          <Route path="/features/farming-classes" element={<FeatureScreenWrapper Component={FarmingClassesScreen} />} />
-          <Route path="/features/map" element={<FeatureScreenWrapper Component={MapScreen} />} />
-          <Route path="/features/mitra" element={<FeatureScreenWrapper Component={MitraScreen} />} />
-          <Route path="/features/search" element={<FeatureScreenWrapper Component={SearchScreen} />} />
-          <Route path="/features/profile" element={<FeatureScreenWrapper Component={ProfileScreen} />} />
-          
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppLayout />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

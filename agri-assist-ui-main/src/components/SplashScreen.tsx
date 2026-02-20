@@ -10,9 +10,10 @@ import farmBackground from '@/assets/farm-background.jpg';
 interface SplashScreenProps {
   onLogin: () => void;
   onSignUp: () => void;
+  onContinueWithoutLogin?: () => void;
 }
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onLogin, onSignUp }) => {
+const SplashScreen: React.FC<SplashScreenProps> = ({ onLogin, onSignUp, onContinueWithoutLogin }) => {
   const { t } = useLanguage();
 
   return (
@@ -68,6 +69,16 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onLogin, onSignUp }) => {
 
           {/* Action Buttons */}
           <div className="w-full max-w-xs space-y-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+            {onContinueWithoutLogin && (
+              <Button
+                variant="outline"
+                size="xl"
+                className="w-full border-2 border-primary/50 text-foreground"
+                onClick={onContinueWithoutLogin}
+              >
+                Continue without login
+              </Button>
+            )}
             <Button
               variant="farmer"
               size="xl"

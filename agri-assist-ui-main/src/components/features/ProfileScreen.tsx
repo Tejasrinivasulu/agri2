@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Edit, Save, X, MapPin, Phone, Mail, Calendar, Award, TrendingUp, Settings, LogOut, Camera } from 'lucide-react';
+import { ArrowLeft, User, Edit, Save, X, MapPin, Phone, Mail, Calendar, Award, TrendingUp, Settings, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAuth } from '@/hooks/useAuth';
 import { STATE_OPTIONS, STATES_DISTRICTS } from '@/data/cropRates';
 
 interface ProfileScreenProps {
@@ -97,21 +96,22 @@ const saveStoredActivity = (activity: ActivityItem[]) => {
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
   const { t } = useLanguage();
-  const { user, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
 
-  // Profile state
-  const [profile, setProfile] = useState<ProfileData>({
-    full_name: user?.user_metadata?.full_name || 'Farmer',
-    email: user?.email || '',
-    phone: '',
-    state: 'Tamil Nadu',
-    district: 'Chennai',
-    address: '',
-    date_of_birth: '',
+  const [profile, setProfile] = useState<ProfileData>(() => {
+    const stored = getStoredProfile();
+    return {
+      full_name: stored?.full_name || 'Farmer',
+      email: stored?.email || '',
+      phone: stored?.phone || '',
+      state: stored?.state || 'Tamil Nadu',
+      district: stored?.district || 'Chennai',
+      address: stored?.address || '',
+      date_of_birth: stored?.date_of_birth || '',
+    };
   });
 
   // Farm state
@@ -175,11 +175,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
       setSaving(false);
       setTimeout(() => setSaveSuccess(null), 3000);
     }, 1000);
-  };
-
-  const handleLogout = async () => {
-    await signOut();
-    window.location.href = '/';
   };
 
   const renderProfileTab = () => (
@@ -446,13 +441,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ onBack }) => {
         </Button>
       </div>
 
-      <div className="bg-card rounded-2xl shadow-card p-4">
-        <h3 className="font-semibold text-foreground mb-3">Danger Zone</h3>
-        <Button variant="destructive" className="w-full" onClick={handleLogout}>
-          <LogOut className="w-4 h-4 mr-2" />
-          Logout
-        </Button>
-      </div>
     </div>
   );
 

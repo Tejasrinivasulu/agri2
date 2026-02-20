@@ -21,7 +21,8 @@ import {
   Gift,
   Tractor,
   Calendar,
-  Map
+  Map,
+  Camera
 } from 'lucide-react';
 
 export type FeatureId =
@@ -45,7 +46,8 @@ export type FeatureId =
   | 'calculator'
   | 'technicians'
   | 'rewards'
-  | 'map';
+  | 'map'
+  | 'crop-scan';
 
 interface Feature {
   id: FeatureId;
@@ -68,6 +70,7 @@ const FeatureGrid: React.FC<FeatureGridProps> = ({ onFeatureClick }) => {
     { id: 'agri-tools', icon: Tractor, label: 'Agri Tools', emoji: '🚜', color: 'bg-sunrise/20' },
     { id: 'technicians', icon: Wrench, label: 'Technicians', emoji: '🔧', color: 'bg-muted' },
     { id: 'price-prediction', icon: Brain, label: 'AI Prediction', emoji: '🤖', color: 'bg-primary/20' },
+    { id: 'crop-scan', icon: Camera, label: 'Crop Scan', emoji: '📷', color: 'bg-primary/20' },
     { id: 'soil-testing', icon: FlaskConical, label: 'Soil Test', emoji: '🧪', color: 'bg-earth-light' },
     { id: 'govt-schemes', icon: Building2, label: 'Govt Schemes', emoji: '🏛️', color: 'bg-secondary' },
     { id: 'agri-officers', icon: UserCheck, label: 'Agri Officers', emoji: '👨‍🌾', color: 'bg-leaf-light' },

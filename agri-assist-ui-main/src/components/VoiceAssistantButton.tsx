@@ -1,49 +1,60 @@
 import React, { useState } from 'react';
-import { Mic, MicOff, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { Mic, MicOff, VolumeX, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAIAssistant } from '@/hooks/useAIAssistant';
+import { useAIAssistant, getVoiceIntentPath } from '@/hooks/useAIAssistant';
 import { useToast } from '@/hooks/use-toast';
 
 interface VoiceAssistantButtonProps {
   className?: string;
+  /** When provided, voice intents like "crop price" or "weather" will navigate to the feature. */
+  onNavigate?: (path: string) => void;
+  /** Optional: called with transcript and response so parent can display them. */
+  onTranscript?: (transcript: string) => void;
+  onResponse?: (response: string) => void;
 }
 
-const VoiceAssistantButton: React.FC<VoiceAssistantButtonProps> = ({ className = '' }) => {
+const VoiceAssistantButton: React.FC<VoiceAssistantButtonProps> = ({ className = '', onNavigate, onTranscript, onResponse }) => {
   const { t } = useLanguage();
-  const { isListening, isSpeaking, isLoading, listen, speak, stopSpeaking, askAssistant } = useAIAssistant();
+  const { isListening, isSpeaking, isLoading, listen, speak, stopSpeaking, answerWithFallback } = useAIAssistant();
   const { toast } = useToast();
-  const [lastResponse, setLastResponse] = useState<string>('');
-  
+
   const handleVoiceClick = async () => {
     if (isSpeaking) {
       stopSpeaking();
       return;
     }
-
     if (isListening || isLoading) return;
 
     try {
       const transcript = await listen();
+      onTranscript?.(transcript);
       toast({
-        title: "🎤 Heard you say:",
-        description: transcript,
+        title: '🎤 Heard',
+        description: transcript || 'Listening...',
       });
 
-      const response = await askAssistant(transcript, 'voice');
-      setLastResponse(response);
+      const path = getVoiceIntentPath(transcript);
+      if (onNavigate && path) {
+        onNavigate(path);
+        toast({ title: 'Opening...', description: path.replace('/features/', '') });
+      }
+
+      const response = await answerWithFallback(transcript);
+      onResponse?.(response);
       speak(response);
-      
       toast({
-        title: "🌾 Farmer Assistant",
-        description: response.substring(0, 100) + (response.length > 100 ? '...' : ''),
+        title: '🌾 Assistant',
+        description: response.length > 80 ? response.substring(0, 80) + '...' : response,
       });
     } catch (error) {
       console.error('Voice error:', error);
+      const msg = (error as Error)?.message || '';
+      const needsPerm = msg.toLowerCase().includes('permission') || msg.toLowerCase().includes('microphone');
       toast({
-        title: "Voice Error",
-        description: "Could not access microphone. Please check permissions.",
-        variant: "destructive",
+        title: 'Voice',
+        description: needsPerm ? 'Microphone access needed. Allow and try again.' : 'Could not listen. Try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -56,9 +67,9 @@ const VoiceAssistantButton: React.FC<VoiceAssistantButtonProps> = ({ className =
   };
 
   const getStatusText = () => {
-    if (isLoading) return "Thinking...";
-    if (isListening) return "Listening...";
-    if (isSpeaking) return "Tap to stop";
+    if (isLoading) return t.thinking;
+    if (isListening) return t.listening;
+    if (isSpeaking) return t.speaking;
     return t.voiceAssistant;
   };
 
