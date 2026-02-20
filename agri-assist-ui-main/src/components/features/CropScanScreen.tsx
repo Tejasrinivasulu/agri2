@@ -107,46 +107,19 @@ const CropScanScreen: React.FC<CropScanScreenProps> = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFile = useCallback(
-    async (file: File | null) => {
-      if (!file || !file.type.startsWith('image/')) {
-        setError('Please select an image file.');
+  const analyze = useCallback(
+    async (imageBase64?: string) => {
+      const dataUrl = imageBase64 ?? imageDataUrl;
+      if (!dataUrl) {
+        setError('Capture or upload an image first.');
         return;
       }
+      setLoading(true);
       setError(null);
-      setResult(null);
       try {
-        const dataUrl = await preprocessImage(file);
-        setImageDataUrl(dataUrl);
-      } catch (e) {
-        setError('Failed to process image.');
-      }
-    },
-    []
-  );
-
-  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    handleFile(file || null);
-    e.target.value = '';
-  };
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    handleFile(file || null);
-    e.target.value = '';
-  };
-
-  const analyze = async () => {
-    if (!imageDataUrl) {
-      setError('Capture or upload an image first.');
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const { data, error: fnError } = await supabase.functions.invoke('crop-image-analysis', {
-        body: { imageBase64: imageDataUrl, language: language === 'te' ? 'Telugu' : language === 'hi' ? 'Hindi' : 'English' },
-      });
+        const { data, error: fnError } = await supabase.functions.invoke('crop-image-analysis', {
+          body: { imageBase64: dataUrl, language: language === 'te' ? 'Telugu' : language === 'hi' ? 'Hindi' : 'English' },
+        });
       if (fnError || !data?.cropName) {
         setResult(mockAnalyze());
       } else {
@@ -162,6 +135,38 @@ const CropScanScreen: React.FC<CropScanScreenProps> = ({ onBack }) => {
     } finally {
       setLoading(false);
     }
+  }, [imageDataUrl, language]);
+
+  const handleFile = useCallback(
+    async (file: File | null, autoAnalyze = false) => {
+      if (!file || !file.type.startsWith('image/')) {
+        setError('Please select an image file.');
+        return;
+      }
+      setError(null);
+      setResult(null);
+      try {
+        const dataUrl = await preprocessImage(file);
+        setImageDataUrl(dataUrl);
+        if (autoAnalyze) {
+          await analyze(dataUrl);
+        }
+      } catch (e) {
+        setError('Failed to process image.');
+      }
+    },
+    [analyze]
+  );
+
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    handleFile(file || null, true);
+    e.target.value = '';
+  };
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    handleFile(file || null, false);
+    e.target.value = '';
   };
 
   const getTTSMessage = useCallback(
@@ -196,7 +201,7 @@ const CropScanScreen: React.FC<CropScanScreenProps> = ({ onBack }) => {
           </Button>
           <div>
             <h1 className="text-xl font-bold text-primary-foreground">Crop Scan</h1>
-            <p className="text-sm text-primary-foreground/80">Capture or upload crop/land image for AI detection</p>
+            <p className="text-sm text-primary-foreground/80">Take a photo to auto-display and detect; or upload an image</p>
           </div>
         </div>
       </div>
